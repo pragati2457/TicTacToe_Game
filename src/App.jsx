@@ -1,13 +1,39 @@
-import React from 'react';
+//import React from 'react';
 import Board from './components/Board';
-
+import { useState } from "react";
 import './style.scss';
+import { calculateWinner } from './winner';
 
-const App = () => {
+function App() {
+
+  const [ squares, setSquares] =useState(Array(9).fill(null));
+  const [isXNext, setIsXNext] = useState(false);
+
+  const winner = calculateWinner (squares);
+  const nextPlayer = isXNext ? 'X' : 'O';
+  const statusMsg = winner ? `Winner is ${winner}` : `Next Player is ${nextPlayer}`;
+
+  const handleSquareClick = clickedPosition => {
+    if(squares[clickedPosition] || winner){
+        return;
+    }
+
+  setSquares(currentSquares => {
+   return currentSquares.map((squareValue , position)=>{
+    if(clickedPosition === position){
+        return isXNext ? 'X' : 'O';
+    }
+    return squareValue;
+   });
+  });
+
+  setIsXNext(currentIsXNext => !currentIsXNext);
+};
+
   return (
     <div className="app">
-      <h1>TIC TAC TOE</h1>
-      <Board />
+      <h2> {statusMsg} </h2>
+      <Board squares = {squares} handleSquareClick = {handleSquareClick} />
     </div>
   );
 };
