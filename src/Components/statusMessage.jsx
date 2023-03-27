@@ -1,7 +1,8 @@
 const  StatusMessage = ({winner , gamingBoard}) =>{
+    const { squares, isXNext} = gamingBoard;
 
-    const nonMovesLeft = gamingBoard.squares.every(squareValue => squareValue !== null);
-    const nextPlayer = gamingBoard ? 'X' : 'O';
+    const nonMovesLeft = squares.every(squareValue => squareValue !== null);
+    const nextPlayer = isXNext ? 'X' : 'O';
 
     const renderStatusMessage = () =>{
         if(winner){
@@ -18,7 +19,7 @@ const  StatusMessage = ({winner , gamingBoard}) =>{
         }
         if (!winner && !nonMovesLeft){
             return <>Next Player is {' '}
-                <span className={gamingBoard ?'text-green' : 'text-orange'} >
+                <span className={ isXNext ? 'text-green' : 'text-orange'} >
                 {nextPlayer}
                 </span>
                 </>

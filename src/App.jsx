@@ -5,17 +5,14 @@ import { calculateWinner } from './winner';
 import  StatusMessage from './Components/statusMessage'
 import History from './Components/History';
 
-function App() {
+const NEW_GAME = [{squares: Array(9).fill(null), isXNext: false}]
 
-  const [history , setHistory] = useState ([
-    {squares : Array (9).fill(null), isXNext : false},
-  ]);
+function App() {
+  const [history , setHistory] = useState (NEW_GAME); 
   const [currentMove, setCurrentMove] = useState(0);
   const gamingBoard = history[currentMove];
 
-  const winner = calculateWinner (gamingBoard.squares);
-
-  console.log ({ historyLength: history.length , currentMove}); 
+  const [winner, winningSquares] = calculateWinner(gamingBoard.squares);
   
   const handleSquareClick = clickedPosition => {
     if(gamingBoard.squares[clickedPosition] || winner){
@@ -24,14 +21,13 @@ function App() {
 
   setHistory(currentHistory => {
     const isTraversing = currentMove + 1 !== currentHistory.length;
-   // console.log(isTraversing);
    const lastGamingState = isTraversing 
-   ?currentHistory[currentMove]
-    : currentHistory[currentHistory.length - 1]
+   ? currentHistory[currentMove]
+    : currentHistory[currentHistory.length - 1];
 
 
-   const nextSquaresState= lastGamingState.squares.map(
-    (squareValue , position)=>{
+   const nextSquaresState = lastGamingState.squares.map(
+    (squareValue, position) => {
     if(clickedPosition === position){
         return lastGamingState.isXNext ? 'X' : 'O';
     }
@@ -39,7 +35,8 @@ function App() {
    }
   );
 
-const base = isTraversing ? currentHistory.slice(0, currentHistory.indexOf(lastGamingState) + 1)
+const base = isTraversing
+ ? currentHistory.slice(0, currentHistory.indexOf(lastGamingState) + 1)
 : currentHistory;
 
   return base.concat({
@@ -49,16 +46,31 @@ const base = isTraversing ? currentHistory.slice(0, currentHistory.indexOf(lastG
   });
   setCurrentMove( move => move + 1 );
 };
- const moveTo = move =>{
+ const moveTo = move => {
   setCurrentMove(move);
  };
 
+  const onNewGameStart = () => {
+    setHistory(NEW_GAME);
+    setCurrentMove(0);
+  };
+
   return (
     <div className="app">
+      <h1>TIC <span className="text-green">TAC</span> TOE</h1>
       <StatusMessage winner = {winner} gamingBoard = {gamingBoard}/>
-      <Board squares = {gamingBoard.squares} handleSquareClick = {handleSquareClick} />
+      <Board squares = {gamingBoard.squares} 
+      handleSquareClick = {handleSquareClick}
+      winningSquares = {winningSquares} />
 
-      <h2>Current Game History</h2>
+     <button type="button" onClick={onNewGameStart}
+     className = {`btn-reset ${winner ? 'active' : ' '}`}
+     >
+      Start New Game</button>
+
+      <h2 style = {{
+        fontWeight: 'normal'
+      }}>Current Game History</h2>
       <History history = {history} moveTo= {moveTo} currentMove= {currentMove}/>
     </div>
   );
